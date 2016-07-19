@@ -17,3 +17,4 @@ class GameStats():
         self.ships_left = self.ai_settings.ship_limit - 1
         self.score = 0
         self.level = 1
+        self.laser_ticks = 0

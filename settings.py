@@ -23,6 +23,11 @@ class Settings():
         # Alien settings
         self.fleet_drop_speed = 10
         
+        # Laser settings
+        self.laser_width = 3
+        self.laser_height = 20
+        self.laser_color = (0, 0, 120)
+
         # How quickly the game speeds up
         self.speedup_scale = 1.1
         # How quickly the alien point values increase
@@ -38,7 +43,10 @@ class Settings():
         self.ship_speed_factor = 5
         self.bullet_speed_factor = 15
         self.alien_speed_factor = 2
-            
+        self.laser_speed_factor = 10
+        self.laser_min_ticks = 60
+        self.laser_max_ticks = 180
+
         # float_direction of 1 represents right; -1 represents left
         self.fleet_direction = 1
 
@@ -47,4 +55,6 @@ class Settings():
         self.ship_speed_factor *= self.speedup_scale
         self.bullet_speed_factor *= self.speedup_scale
         self.alien_speed_factor *= self.speedup_scale
+        self.laser_min_ticks = int(self.laser_min_ticks / self.speedup_scale)
+        self.laser_max_ticks = int(self.laser_max_ticks / self.speedup_scale)
         self.alien_points = int(self.alien_points * self.score_scale)
