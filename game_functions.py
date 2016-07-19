@@ -107,7 +107,7 @@ def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets):
         bullets)
 
 def update_lasers(ai_settings, screen, stats, sb, ship, aliens, bullets, 
-        lasers):
+        lasers, sounds):
     """Update position of bullets at get rid of old bullets."""
     # Update lasers positions.
     lasers.update()
@@ -119,7 +119,8 @@ def update_lasers(ai_settings, screen, stats, sb, ship, aliens, bullets,
     
     # Look for laser-ship collisions
     if pygame.sprite.spritecollideany(ship, lasers):
-        ship_hit(ai_settings, stats, sb, screen, ship, aliens, bullets, lasers)
+        ship_hit(ai_settings, stats, sb, screen, ship, aliens, bullets,
+            lasers, sounds)
 
 def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens,
         bullets):
@@ -151,32 +152,32 @@ def fire_bullet(ai_settings, screen, ship, bullets, sounds):
         bullets.add(new_bullet)
         sounds.ship_shoot()
 
-def check_lasers(ai_settings, screen, stats, aliens, lasers):
+def check_lasers(ai_settings, screen, stats, aliens, lasers, sounds):
     """Check whether a laser should be fired."""
     if stats.laser_ticks >= ai_settings.laser_max_ticks:
         fire_laser(ai_settings, screen, aliens, lasers)
     elif stats.laser_ticks >= ai_settings.laser_min_ticks:
         if stats.laser_ticks == random.randrange(ai_settings.laser_min_ticks,
                 ai_settings.laser_max_ticks):
-            fire_laser(ai_settings, screen, stats, aliens, lasers)
+            fire_laser(ai_settings, screen, stats, aliens, lasers, sounds)
     else:
         stats.laser_ticks += 1
 
-def fire_laser(ai_settings, screen, stats, aliens, lasers):
+def fire_laser(ai_settings, screen, stats, aliens, lasers, sounds):
     """Fire a laser."""
     # Choose an alien at random.
     num_aliens = len(aliens)
-    print(num_aliens)
     random_alien = random.randrange(0, num_aliens)
     alien_index = 0
-
+    
     for alien in aliens:
         if alien_index == random_alien:
             new_laser = Laser(ai_settings, screen, alien)
             lasers.add(new_laser)
+            sounds.alien_shoot()
             break
-        else:
-            alien_index += 1
+
+        alien_index += 1
 
     stats.laser_ticks = 0
 
@@ -229,9 +230,13 @@ def change_fleet_direction(ai_settings, aliens):
         alien.rect.y += ai_settings.fleet_drop_speed
     ai_settings.fleet_direction *= -1
 
-def ship_hit(ai_settings, stats, sb, screen, ship, aliens, bullets, lasers):
+def ship_hit(ai_settings, stats, sb, screen, ship, aliens, bullets, lasers,
+        sounds):
     """Respond to ship being hit by alien."""
     if stats.ships_left > 0:
+        # Play ship hit sound.
+        sounds.ship_hit()
+        
         # Decrement ships_left.
         stats.ships_left -= 1
         sb.prep_ships()
@@ -246,25 +251,25 @@ def ship_hit(ai_settings, stats, sb, screen, ship, aliens, bullets, lasers):
         ship.center_ship()
     
         # Pause.
-        sleep(0.5)
+        sleep(2)
 
     else:
         stats.game_active = False
         pygame.mouse.set_visible(True)
 
 def check_aliens_bottom(ai_settings, stats, sb, screen, ship, aliens, bullets,
-        lasers):
+        lasers, sounds):
     """Check if any aliens have reached the bottom of the screen."""
     screen_rect = screen.get_rect()
     for alien in aliens.sprites():
         if alien.rect.bottom >= screen_rect.bottom:
             # Treat this the same as if the ship got hit.
             ship_hit(ai_settings, stats, sb, screen, ship, aliens, bullets,
-                lasers)
+                lasers, sounds)
 
 
 def update_aliens(ai_settings, stats, sb, screen, ship, aliens, bullets,
-        lasers):
+        lasers, sounds):
     """
     Check if the fleet is at an edge,
         and then update the position of all aliens in the fleet.
@@ -278,7 +283,7 @@ def update_aliens(ai_settings, stats, sb, screen, ship, aliens, bullets,
 
     # Look for aliens hitting the bottom of the screen.
     check_aliens_bottom(ai_settings, stats, sb, screen, ship, aliens, bullets,
-    lasers)
+    lasers, sounds)
 
 def check_high_score(stats, sb):
     """Check to see if there's a new high score."""

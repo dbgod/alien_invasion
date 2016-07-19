@@ -53,11 +53,12 @@ def run_game():
             ship.update()
             gf.update_bullets(ai_settings, screen, stats, sb, ship, aliens,
                 bullets)
-            gf.check_lasers(ai_settings, screen, stats, aliens, lasers)
+            gf.check_lasers(ai_settings, screen, stats, aliens, lasers, 
+				sounds)
             gf.update_lasers(ai_settings, screen, stats, sb, ship, aliens,
-                bullets, lasers)
+                bullets, lasers, sounds)
             gf.update_aliens(ai_settings, stats, sb, screen, ship, aliens,
-                bullets, lasers)
+                bullets, lasers, sounds)
         
         gf.update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets,
             lasers, play_button)
